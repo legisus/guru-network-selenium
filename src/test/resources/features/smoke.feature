@@ -18,9 +18,9 @@ Feature: Smoke Functionality
     When I navigate to tokens page
     Then Check that it has same components like on dex guru tokens page
     #3
-#    When I navigate to analytics page
-#    And Click on asistant
-#    Then Guru AI was opened
+    When I navigate to analytics page
+    And Click on assistant
+    Then Guru AI was opened
     #4
 #    When I enter request "make me analytics by dashboard" for Guru AI
 
