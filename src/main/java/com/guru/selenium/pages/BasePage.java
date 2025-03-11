@@ -2,7 +2,6 @@ package com.guru.selenium.pages;
 
 import com.guru.selenium.utils.DriverFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,8 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.function.Function;
 
 @Slf4j
 public abstract class BasePage {
@@ -33,9 +30,6 @@ public abstract class BasePage {
         waitForPageToLoad();
     }
 
-    /**
-     * Waits for the page to be fully loaded
-     */
     protected void waitForPageToLoad() {
         log.debug("Waiting for page to load completely");
         wait.until(driver -> {
@@ -44,7 +38,6 @@ public abstract class BasePage {
             return "complete".equals(readyState);
         });
 
-        // Wait for jQuery to load (if present)
         try {
             wait.until(driver -> {
                 boolean jQueryDefined = (boolean) ((JavascriptExecutor) driver)
@@ -60,7 +53,6 @@ public abstract class BasePage {
             log.debug("jQuery not available or error checking jQuery status: {}", e.getMessage());
         }
 
-        // Wait for Angular to load (if present)
         try {
             wait.until(driver -> {
                 boolean angularDefined = (boolean) ((JavascriptExecutor) driver)
@@ -79,12 +71,6 @@ public abstract class BasePage {
         log.debug("Page load wait complete");
     }
 
-    /**
-     * Waits for a WebElement to be present in the DOM
-     * @param element WebElement to wait for
-     * @param timeoutInSeconds Maximum time to wait in seconds
-     * @return The same WebElement once it's present
-     */
     protected WebElement waitForElementPresence(WebElement element, long timeoutInSeconds) {
         log.debug("Waiting for element presence, timeout: {} seconds", timeoutInSeconds);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
@@ -101,28 +87,16 @@ public abstract class BasePage {
         });
     }
 
-    /**
-     * Waits for a WebElement to be visible
-     * @param element WebElement to wait for
-     */
     protected void waitForElementToBeVisible(WebElement element) {
         log.debug("Waiting for element to be visible");
         wait.until(ExpectedConditions.visibilityOf(element));
     }
 
-    /**
-     * Waits for a WebElement to be clickable (for elements defined using @FindBy)
-     * @param element WebElement to wait for
-     */
     protected void waitForElementToBeClickable(WebElement element) {
         log.debug("Waiting for element to be clickable");
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
-    /**
-     * Clicks on a WebElement (for elements defined using @FindBy)
-     * @param element WebElement to click
-     */
     protected void clickElement(WebElement element) {
         log.info("Clicking element");
         try {
@@ -135,11 +109,6 @@ public abstract class BasePage {
         }
     }
 
-    /**
-     * Checks if a WebElement is displayed (for elements defined using @FindBy)
-     * @param element WebElement to check
-     * @return true if element is displayed, false otherwise
-     */
     protected boolean isElementDisplayed(WebElement element) {
         log.debug("Checking if element is displayed");
         try {
