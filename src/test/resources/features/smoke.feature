@@ -12,7 +12,7 @@ Feature: Smoke Functionality
     When I click on signIn button
     And Verify that popup appeared
     And Click on logIn with Telegram button
-    And Enter phone "4244629816" for login with Telegram
+    And Enter phone '4244629816' for login with Telegram
     Then Verify profile uploaded successfully
     #2
     When I navigate to tokens page
@@ -21,8 +21,8 @@ Feature: Smoke Functionality
     When I navigate to analytics page
     And Click on assistant
     Then Guru AI was opened
-    #4
-#    When I enter request "make me analytics by dashboard" for Guru AI
+    Then I click on button 'Give me a summary of this data' for Guru AI
+
 
 
 
