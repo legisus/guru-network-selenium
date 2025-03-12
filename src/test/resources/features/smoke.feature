@@ -12,7 +12,7 @@ Feature: Smoke Functionality
     When I click on signIn button
     And Verify that popup appeared
     And Click on logIn with Telegram button
-    And Enter phone '4244629816' for login with Telegram
+    And Enter phone 'YOUR_PHONE_NUMBER' for login with Telegram
     Then Verify profile uploaded successfully
     #2
     When I navigate to tokens page
