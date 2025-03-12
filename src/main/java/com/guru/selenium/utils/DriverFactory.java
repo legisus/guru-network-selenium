@@ -41,7 +41,6 @@ public class DriverFactory {
     public void initializeDriver() {
         log.info("Initializing WebDriver");
 
-        // First make sure any existing driver is closed
         quitDriver();
 
         String browser = config.getProperty("browser", "chrome").toLowerCase();
@@ -62,7 +61,6 @@ public class DriverFactory {
                 driver = createChromeDriver();
         }
 
-        // Set timeouts
         driver.manage().timeouts().implicitlyWait(
                 Duration.ofMillis(config.getIntProperty("timeouts.implicit", 10000)));
         driver.manage().timeouts().pageLoadTimeout(
@@ -74,7 +72,6 @@ public class DriverFactory {
             driver.manage().window().maximize();
         }
 
-        // Test the driver by navigating to about:blank
         try {
             driver.get("about:blank");
             log.info("Successfully navigated to about:blank with new WebDriver instance");
@@ -90,14 +87,12 @@ public class DriverFactory {
     private WebDriver createChromeDriver() {
         log.debug("Creating Chrome WebDriver");
 
-        // Set up ChromeDriver automatically
         try {
             log.info("Setting up ChromeDriver using WebDriverManager");
             io.github.bonigarcia.wdm.WebDriverManager.chromedriver().setup();
             log.info("ChromeDriver set up successfully");
         } catch (Exception e) {
             log.warn("Failed to set up ChromeDriver automatically: {}", e.getMessage());
-            // Fall back to manual configuration if needed
             String chromeDriverPath = config.getProperty("webdriver.chrome.driver");
             if (chromeDriverPath != null && !chromeDriverPath.isEmpty()) {
                 System.setProperty("webdriver.chrome.driver", chromeDriverPath);
@@ -120,7 +115,6 @@ public class DriverFactory {
         options.addArguments("--disable-gpu");
         options.addArguments("--window-size=1920,1080");
 
-        // Add user-configured arguments
         String chromeArgs = config.getProperty("chrome.args", "");
         if (!chromeArgs.isEmpty()) {
             for (String arg : chromeArgs.split(",")) {
@@ -138,13 +132,11 @@ public class DriverFactory {
     private WebDriver createFirefoxDriver() {
         log.debug("Creating Firefox WebDriver");
 
-        // Set up FirefoxDriver automatically
         try {
             io.github.bonigarcia.wdm.WebDriverManager.firefoxdriver().setup();
             log.info("FirefoxDriver set up automatically");
         } catch (Exception e) {
             log.warn("Failed to set up FirefoxDriver automatically: {}", e.getMessage());
-            // Fall back to manual configuration if needed
             String geckoDriverPath = config.getProperty("webdriver.gecko.driver");
             if (geckoDriverPath != null && !geckoDriverPath.isEmpty()) {
                 System.setProperty("webdriver.gecko.driver", geckoDriverPath);
@@ -167,13 +159,11 @@ public class DriverFactory {
     private WebDriver createEdgeDriver() {
         log.debug("Creating Edge WebDriver");
 
-        // Set up EdgeDriver automatically
         try {
             io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
             log.info("EdgeDriver set up automatically");
         } catch (Exception e) {
             log.warn("Failed to set up EdgeDriver automatically: {}", e.getMessage());
-            // Fall back to manual configuration if needed
             String edgeDriverPath = config.getProperty("webdriver.edge.driver");
             if (edgeDriverPath != null && !edgeDriverPath.isEmpty()) {
                 System.setProperty("webdriver.edge.driver", edgeDriverPath);

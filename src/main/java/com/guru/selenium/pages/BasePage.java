@@ -15,11 +15,11 @@ import java.time.Duration;
 public abstract class BasePage {
     protected final WebDriver driver;
     protected final WebDriverWait wait;
-    protected static final long defaultTimeoutSeconds = 30;
+    protected static final long DEFAULT_TIMEOUT_SECONDS = 30;
 
     protected BasePage() {
         this.driver = DriverFactory.getInstance().getDriver();
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(defaultTimeoutSeconds));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
         log.info("Initialized BasePage with PageFactory");
     }
@@ -43,7 +43,7 @@ public abstract class BasePage {
                 boolean jQueryDefined = (boolean) ((JavascriptExecutor) driver)
                         .executeScript("return typeof jQuery != 'undefined'");
                 if (!jQueryDefined) {
-                    return true; // jQuery is not used in the page, so no need to wait
+                    return true;
                 }
                 return (boolean) ((JavascriptExecutor) driver)
                         .executeScript("return jQuery.active == 0");
@@ -76,7 +76,6 @@ public abstract class BasePage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         return wait.until(driver -> {
             try {
-                // Check if element is present in DOM (may not be visible)
                 if (element.isDisplayed() || !element.isDisplayed()) {
                     return element;
                 }

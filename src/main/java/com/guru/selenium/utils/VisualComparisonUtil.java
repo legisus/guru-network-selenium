@@ -28,25 +28,20 @@ public class VisualComparisonUtil {
         Map<String, Object> differences = new HashMap<>();
 
         try {
-            // First site analysis
             driver.get(firstUrl);
             waitForPageLoad(driver);
             Map<String, Object> firstSiteData = collectSiteData(driver);
 
-            // Second site analysis
             driver.get(secondUrl);
             waitForPageLoad(driver);
             Map<String, Object> secondSiteData = collectSiteData(driver);
 
-            // Compare common elements
-            // Check for search inputs
             if (firstSiteData.containsKey("searchInput") && secondSiteData.containsKey("searchInput")) {
                 similarities.put("searchInput", true);
             } else {
                 differences.put("searchInput", false);
             }
 
-            // Check for token lists
             if (firstSiteData.containsKey("tokenElements") && secondSiteData.containsKey("tokenElements")) {
                 int firstCount = (int) firstSiteData.get("tokenCount");
                 int secondCount = (int) secondSiteData.get("tokenCount");
@@ -55,7 +50,6 @@ public class VisualComparisonUtil {
                 similarities.put("tokenCountFirst", firstCount);
                 similarities.put("tokenCountSecond", secondCount);
 
-                // If both sites have significant number of tokens
                 if (firstCount > 5 && secondCount > 5) {
                     similarities.put("hasMultipleTokens", true);
                 }
@@ -63,14 +57,12 @@ public class VisualComparisonUtil {
                 differences.put("hasTokenList", false);
             }
 
-            // Navigation structure
             if (firstSiteData.containsKey("navElements") && secondSiteData.containsKey("navElements")) {
                 similarities.put("hasNavigation", true);
             } else {
                 differences.put("hasNavigation", false);
             }
 
-            // Footer structure
             if (firstSiteData.containsKey("footerElements") && secondSiteData.containsKey("footerElements")) {
                 similarities.put("hasFooter", true);
             } else {
@@ -80,7 +72,6 @@ public class VisualComparisonUtil {
             report.put("similarities", similarities);
             report.put("differences", differences);
 
-            // Calculate similarity score
             double totalChecks = similarities.size() + differences.size();
             double matchCount = similarities.size();
             double similarityScore = (matchCount / totalChecks) * 100;
@@ -101,13 +92,11 @@ public class VisualComparisonUtil {
     private static Map<String, Object> collectSiteData(WebDriver driver) {
         Map<String, Object> data = new HashMap<>();
 
-        // Check for search inputs
         List<WebElement> searchInputs = driver.findElements(By.cssSelector("input[type='search'], input[placeholder*='Search']"));
         if (!searchInputs.isEmpty()) {
             data.put("searchInput", searchInputs.get(0));
         }
 
-        // Check for token elements (using common class patterns from HTML analysis)
         List<WebElement> tokenElements = driver.findElements(By.cssSelector(
                 ".TokenAsset_container__q260a, .token-item, .TokenItem, .Marquee_item__6sQZ_, [class*='token']"));
         if (!tokenElements.isEmpty()) {
@@ -115,14 +104,12 @@ public class VisualComparisonUtil {
             data.put("tokenCount", tokenElements.size());
         }
 
-        // Check for navigation elements
         List<WebElement> navElements = driver.findElements(By.cssSelector(
                 ".MainMenu_container__Uuptt, .navigation, .nav, [class*='menu']"));
         if (!navElements.isEmpty()) {
             data.put("navElements", navElements);
         }
 
-        // Check for footer elements
         List<WebElement> footerElements = driver.findElements(By.cssSelector(
                 ".layout_footer__Koz5Z, footer, .footer"));
         if (!footerElements.isEmpty()) {
@@ -134,11 +121,9 @@ public class VisualComparisonUtil {
 
     private static void waitForPageLoad(WebDriver driver) {
         try {
-            // Wait for page to load completely
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("return document.readyState").equals("complete");
 
-            // Additional wait for any dynamic content
             Thread.sleep(2000);
         } catch (Exception e) {
             log.warn("Error waiting for page load: {}", e.getMessage());
@@ -153,7 +138,6 @@ public class VisualComparisonUtil {
             driver.get(url);
             waitForPageLoad(driver);
 
-            // Execute JavaScript to find potential selectors
             JavascriptExecutor js = (JavascriptExecutor) driver;
             String script =
                     "const suggestions = [];" +
@@ -164,7 +148,7 @@ public class VisualComparisonUtil {
                             "      .forEach(cls => suggestions.push({'selector': '.' + cls, 'element': el.tagName}));" +
                             "  }" +
                             "});" +
-                            "return suggestions.slice(0, 20);"; // Limit to 20 suggestions
+                            "return suggestions.slice(0, 20);";
 
             List<Map<String, Object>> suggestions = (List<Map<String, Object>>) js.executeScript(script);
 

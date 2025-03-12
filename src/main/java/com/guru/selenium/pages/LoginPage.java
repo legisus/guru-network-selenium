@@ -66,11 +66,9 @@ public class LoginPage extends BasePage {
     public void clickLoginWithTelegramButton() {
         log.info("Clicking on Login with Telegram button");
 
-        // Store initial window handles count
         int initialWindowCount = driver.getWindowHandles().size();
         log.info("Initial window count: {}", initialWindowCount);
 
-        // Wait for iframe to be visible and switch to it
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOf(telegramLoginIframe));
         driver.switchTo().frame(telegramLoginIframe);
@@ -106,15 +104,12 @@ public class LoginPage extends BasePage {
                 log.info("Clicking login trigger element");
                 loginButton.click();
             } else {
-                // The iframe might already be showing a form to enter phone directly
                 log.info("No login button found, the iframe might already be showing the phone form");
             }
         } finally {
-            // Switch back to main document
             driver.switchTo().defaultContent();
         }
 
-        // Wait for new window to appear
         try {
             wait.until(driver -> driver.getWindowHandles().size() > initialWindowCount);
             log.info("New window detected after login button click");
@@ -126,7 +121,6 @@ public class LoginPage extends BasePage {
     public void switchToNewWindowAndEnterPhone(String phone) {
         log.info("Switching to new window and entering phone: {}", phone);
 
-        // Store the original window handle
         String originalWindow = driver.getWindowHandle();
         Set<String> allWindows = driver.getWindowHandles();
 
@@ -135,7 +129,6 @@ public class LoginPage extends BasePage {
             return;
         }
 
-        // Find the new window handle
         String newWindowHandle = null;
         for (String windowHandle : allWindows) {
             if (!windowHandle.equals(originalWindow)) {
@@ -149,15 +142,12 @@ public class LoginPage extends BasePage {
             return;
         }
 
-        // Switch to the new window
         driver.switchTo().window(newWindowHandle);
         log.info("Switched to new window: {}", driver.getTitle());
 
         try {
-            // Wait a moment for the window content to load
             Thread.sleep(2000);
 
-            // Find phone input field
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             WebElement phoneInput = wait.until(ExpectedConditions.presenceOfElementLocated(
                     By.cssSelector("input#login-phone")));
@@ -167,19 +157,15 @@ public class LoginPage extends BasePage {
             phoneInput.clear();
             phoneInput.sendKeys(phone);
 
-            // Find and click the Next button using the exact HTML structure
             WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(
                     By.cssSelector("button.button-item[type='submit']")));
 
             log.info("Found Next button, clicking");
             nextButton.click();
 
-            // Wait some time for manual verification in Telegram app
             log.info("Please complete the manual verification in Telegram app");
 
-            // After manual verification, wait for the Accept button to appear
             try {
-                // Wait up to 60 seconds for the Accept button
                 WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(60));
                 WebElement acceptButton = longWait.until(ExpectedConditions.elementToBeClickable(
                         By.xpath("//button[.//span[contains(text(), 'Accept')]]")));
@@ -187,7 +173,6 @@ public class LoginPage extends BasePage {
                 log.info("Accept button found, clicking");
                 acceptButton.click();
 
-                // Wait a moment for the window to process after clicking Accept
                 Thread.sleep(3000);
 
             } catch (Exception e) {
@@ -197,22 +182,17 @@ public class LoginPage extends BasePage {
         } catch (Exception e) {
             log.error("Error interacting with new window: {}", e.getMessage());
         } finally {
-            // Try to switch back to the original window
             try {
-                // The window might close itself after clicking Accept
-                // Check if the new window is still open
                 try {
                     String currentTitle = driver.getTitle();
                     log.info("Window is still open with title: {}", currentTitle);
 
-                    // If window is still open, try to close it
                     driver.close();
                     log.info("Closed the authentication window");
                 } catch (Exception e) {
                     log.info("Authentication window appears to have closed itself");
                 }
 
-                // Switch back to the original window
                 driver.switchTo().window(originalWindow);
                 log.info("Switched back to original window");
 

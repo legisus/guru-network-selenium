@@ -32,32 +32,23 @@ public class TokensSteps {
     @Then("Check that it has same components like on dex guru tokens page")
     public void checkThatItHasSameComponentsLikeOnDexGuruTokensPage() {
         log.info("Checking that components are similar to dex guru tokens page");
-
-        // Method 1: Use our custom component comparison
         boolean areSimilar = tokensPage.verifyComponentsSimilarity();
-
-        // Method 2: Use the utility for a more detailed comparison
         Map<String, Object> comparisonReport = VisualComparisonUtil.compareWebsites(
                 driver,
                 "https://app-guru-network-mono.dexguru.biz/tokens",
                 "https://dex.guru/tokens"
         );
-
-        // Log the detailed report
         log.info("Comparison report: {}", comparisonReport);
 
-        // Get the similarity score from the utility
         double similarityScore = (double) comparisonReport.getOrDefault("similarityScore", 0.0);
         log.info("Similarity score: {}%", similarityScore);
 
-        // Check if the sites are considered similar (using both methods)
         boolean isVisualComparisonPassed = similarityScore >= 70.0;
         boolean finalVerdict = areSimilar && isVisualComparisonPassed;
 
         assertTrue("Components should be similar to dex.guru tokens page", finalVerdict);
         log.info("Components similarity verification completed with result: {}", finalVerdict ? "PASS" : "FAIL");
 
-        // Additional debugging for element selectors if needed
         if (!finalVerdict) {
             log.info("Performing additional selector analysis for debugging purposes:");
             VisualComparisonUtil.suggestSelectors(driver, "https://app-guru-network-mono.dexguru.biz/tokens");

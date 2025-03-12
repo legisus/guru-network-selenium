@@ -36,16 +36,11 @@ public class AnalyticsSteps {
     public void guruAIWasOpened() {
         log.info("Verifying Guru AI was opened");
         boolean isGuruAiOpened = analyticsPage.isGuruAiOpened();
-
-        // Take screenshot for evidence
         try {
             log.info("Taking screenshot of opened Guru AI");
-            // Uncomment this line when ScreenshotUtil is available
-            // ScreenshotUtil.takeScreenshot(driver, "guru_ai_opened");
         } catch (Exception e) {
             log.warn("Failed to take screenshot: {}", e.getMessage());
         }
-
         assertTrue("Guru AI should be opened after clicking the assistant button", isGuruAiOpened);
         log.info("Guru AI opened verification completed with result: {}", isGuruAiOpened ? "PASS" : "FAIL");
     }

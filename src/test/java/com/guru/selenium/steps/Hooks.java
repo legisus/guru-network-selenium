@@ -24,10 +24,8 @@ public class Hooks {
     public void setupTest(Scenario scenario) {
         log.info("Starting scenario: {}", scenario.getName());
 
-        // Explicitly initialize the WebDriver and ensure browser is opened
         WebDriver driver = DriverFactory.getInstance().getDriver();
 
-        // Verify driver is initialized
         if (driver != null) {
             log.info("WebDriver is initialized and browser should be open");
         } else {

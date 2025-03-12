@@ -19,7 +19,6 @@ public class TokensPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Based on the HTML structure from both sites
     private final By searchInput = By.cssSelector("input[placeholder*='Search']");
     private final By tokenMarquee = By.cssSelector(".Marquee_container__n8pSR");
     private final By tokensList = By.cssSelector(".content_body__1Ac9z");
@@ -41,14 +40,12 @@ public class TokensPage {
         waitForPageLoad();
         driver.get("https://app-guru-network-mono.dexguru.biz/tokens");
         log.info("Navigated to app-guru-network-mono tokens page");
-        // Wait for page to load
         waitForPageLoad();
     }
 
     public void navigateToDexGuruTokensPage() {
         driver.get("https://dex.guru/tokens");
         log.info("Navigated to dex.guru tokens page");
-        // Wait for page to load
         waitForPageLoad();
     }
 
@@ -62,19 +59,15 @@ public class TokensPage {
     }
 
     public Map<String, Boolean> compareComponentsWithDexGuru() {
-        // Store current URL to return to later
         String currentUrl = driver.getCurrentUrl();
 
-        // First capture components from app-guru-network-mono
         log.info("Capturing components from app-guru-network-mono");
         Map<String, Boolean> componentsPresent = captureComponentsPresence();
 
-        // Navigate to dex.guru to compare
         navigateToDexGuruTokensPage();
         log.info("Capturing components from dex.guru");
         Map<String, Boolean> dexGuruComponents = captureComponentsPresence();
 
-        // Compare both sites and create comparison result
         Map<String, Boolean> comparisonResult = new HashMap<>();
 
         for (String component : componentsPresent.keySet()) {
@@ -83,7 +76,6 @@ public class TokensPage {
             log.info("Component '{}' match: {}", component, isMatching);
         }
 
-        // Return to original URL
         driver.get(currentUrl);
 
         return comparisonResult;
@@ -103,7 +95,6 @@ public class TokensPage {
         components.put("deltaValues", isElementPresent(deltaValues));
         components.put("footerNavigation", isElementPresent(footerNavigation));
 
-        // Additional check for number of token items displayed
         int tokenItemCount = driver.findElements(tokenAssetsItems).size();
         log.info("Number of token items found: {}", tokenItemCount);
         components.put("hasMultipleTokens", tokenItemCount > 5);
@@ -126,28 +117,19 @@ public class TokensPage {
     public boolean verifyComponentsSimilarity() {
         Map<String, Boolean> comparisonResult = compareComponentsWithDexGuru();
 
-        // Log all components comparison details
         comparisonResult.forEach((key, value) ->
                 log.info("Component comparison - {}: {}", key, value ? "MATCH" : "MISMATCH"));
 
-        // Check if at least 70% of components match (you can adjust this threshold)
         long matchingCount = comparisonResult.values().stream().filter(value -> value).count();
         double similarityPercentage = (double) matchingCount / comparisonResult.size() * 100;
 
         log.info("Component similarity percentage: {}%", similarityPercentage);
 
-        // Consider similar if at least 70% of components match
         return similarityPercentage >= 70;
     }
 
-    // Capture screenshots for comparison if needed
     public void captureScreenshotOfBothSites() {
-        // Navigate to first site and capture screenshot
         navigateToTokensPage();
-        // Take screenshot code here
-
-        // Navigate to second site and capture screenshot
         navigateToDexGuruTokensPage();
-        // Take screenshot code here
     }
 }

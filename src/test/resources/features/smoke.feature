@@ -21,7 +21,11 @@ Feature: Smoke Functionality
     When I navigate to analytics page
     And Click on assistant
     Then Guru AI was opened
-    Then I click on button 'Give me a summary of this data' for Guru AI
+    #4
+    When I click on button 'Give me a summary of this data' for Guru AI
+    Then I check that Guru AI contribute any response
+
+
 
 
 

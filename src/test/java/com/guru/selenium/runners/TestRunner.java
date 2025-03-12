@@ -27,19 +27,15 @@ public class TestRunner {
         public static void setup() {
                 log.info("Setting up TestRunner");
 
-                // Make sure drivers are set up correctly
                 try {
-                        // This forces the external WebDriverManager to perform its setup
                         io.github.bonigarcia.wdm.WebDriverManager.chromedriver().setup();
                         log.info("ChromeDriver set up successfully");
                 } catch (Exception e) {
                         log.error("Failed to set up ChromeDriver: {}", e.getMessage(), e);
                 }
 
-                // Print Java version for debugging
                 log.info("Java version: {}", System.getProperty("java.version"));
 
-                // Print Chrome version if available
                 try {
                         ProcessBuilder builder = new ProcessBuilder("google-chrome", "--version");
                         Process process = builder.start();
