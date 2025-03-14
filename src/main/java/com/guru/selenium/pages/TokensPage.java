@@ -2,23 +2,13 @@ package com.guru.selenium.pages;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.guru.selenium.utils.DriverFactory;
-
 @Slf4j
-public class TokensPage {
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
+public class TokensPage extends BasePage {
+    // Locators
     private final By searchInput = By.cssSelector("input[placeholder*='Search']");
     private final By tokenMarquee = By.cssSelector(".Marquee_container__n8pSR");
     private final By tokensList = By.cssSelector(".content_body__1Ac9z");
@@ -30,88 +20,63 @@ public class TokensPage {
     private final By deltaValues = By.cssSelector(".Delta_container__fMWhH");
     private final By footerNavigation = By.cssSelector(".layout_footer__Koz5Z");
 
+    // URLs
+    private static final String APP_TOKENS_URL = "https://app-guru-network-mono.dexguru.biz/tokens";
+    private static final String DEX_TOKENS_URL = "https://dex.guru/tokens";
+
     public TokensPage() {
-        this.driver = DriverFactory.getInstance().getDriver();
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super();
         log.info("TokensPage initialized");
     }
 
     public void navigateToTokensPage() {
-        waitForPageLoad();
-        driver.get("https://app-guru-network-mono.dexguru.biz/tokens");
-        log.info("Navigated to app-guru-network-mono tokens page");
-        waitForPageLoad();
+        log.info("Navigating to app-guru-network-mono tokens page");
+        navigateToAndWaitForElement(APP_TOKENS_URL, tokenMarquee);
     }
 
     public void navigateToDexGuruTokensPage() {
-        driver.get("https://dex.guru/tokens");
-        log.info("Navigated to dex.guru tokens page");
-        waitForPageLoad();
-    }
-
-    private void waitForPageLoad() {
-        try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(tokenMarquee));
-            log.info("Page loaded successfully");
-        } catch (Exception e) {
-            log.warn("Timeout waiting for page to load, continuing anyway: {}", e.getMessage());
-        }
+        log.info("Navigating to dex.guru tokens page");
+        navigateToAndWaitForElement(DEX_TOKENS_URL, tokenMarquee);
     }
 
     public Map<String, Boolean> compareComponentsWithDexGuru() {
+        // Create map of components to check
+        Map<String, By> componentsToCheck = new HashMap<>();
+        componentsToCheck.put("searchInput", searchInput);
+        componentsToCheck.put("tokenMarquee", tokenMarquee);
+        componentsToCheck.put("tokensList", tokensList);
+        componentsToCheck.put("tokenAssetsItems", tokenAssetsItems);
+        componentsToCheck.put("navigationLinks", navigationLinks);
+        componentsToCheck.put("categoryTabs", categoryTabs);
+        componentsToCheck.put("tokenTagsCloud", tokenTagsCloud);
+        componentsToCheck.put("tokenTagButtons", tokenTagButtons);
+        componentsToCheck.put("deltaValues", deltaValues);
+        componentsToCheck.put("footerNavigation", footerNavigation);
+
+        // Use BasePage method to compare with other page
+        Map<String, Boolean> comparisonResult = compareElementsWithOtherPage(componentsToCheck, DEX_TOKENS_URL);
+
+        // Add token count comparison
         String currentUrl = driver.getCurrentUrl();
 
-        log.info("Capturing components from app-guru-network-mono");
-        Map<String, Boolean> componentsPresent = captureComponentsPresence();
+        // Check token count on app page
+        navigateToTokensPage();
+        int appTokenCount = getElementCount(tokenAssetsItems);
+        log.info("Number of token items found on app page: {}", appTokenCount);
 
+        // Check token count on dex.guru page
         navigateToDexGuruTokensPage();
-        log.info("Capturing components from dex.guru");
-        Map<String, Boolean> dexGuruComponents = captureComponentsPresence();
+        int dexTokenCount = getElementCount(tokenAssetsItems);
+        log.info("Number of token items found on dex.guru page: {}", dexTokenCount);
 
-        Map<String, Boolean> comparisonResult = new HashMap<>();
+        // Compare token counts
+        boolean hasMultipleTokens = appTokenCount > 5 && dexTokenCount > 5;
+        comparisonResult.put("hasMultipleTokens", hasMultipleTokens);
 
-        for (String component : componentsPresent.keySet()) {
-            boolean isMatching = componentsPresent.get(component) && dexGuruComponents.getOrDefault(component, false);
-            comparisonResult.put(component, isMatching);
-            log.info("Component '{}' match: {}", component, isMatching);
-        }
-
+        // Return to original URL
         driver.get(currentUrl);
 
         return comparisonResult;
-    }
-
-    private Map<String, Boolean> captureComponentsPresence() {
-        Map<String, Boolean> components = new HashMap<>();
-
-        components.put("searchInput", isElementPresent(searchInput));
-        components.put("tokenMarquee", isElementPresent(tokenMarquee));
-        components.put("tokensList", isElementPresent(tokensList));
-        components.put("tokenAssetsItems", isElementPresent(tokenAssetsItems));
-        components.put("navigationLinks", isElementPresent(navigationLinks));
-        components.put("categoryTabs", isElementPresent(categoryTabs));
-        components.put("tokenTagsCloud", isElementPresent(tokenTagsCloud));
-        components.put("tokenTagButtons", isElementPresent(tokenTagButtons));
-        components.put("deltaValues", isElementPresent(deltaValues));
-        components.put("footerNavigation", isElementPresent(footerNavigation));
-
-        int tokenItemCount = driver.findElements(tokenAssetsItems).size();
-        log.info("Number of token items found: {}", tokenItemCount);
-        components.put("hasMultipleTokens", tokenItemCount > 5);
-
-        return components;
-    }
-
-    private boolean isElementPresent(By locator) {
-        try {
-            List<WebElement> elements = driver.findElements(locator);
-            boolean result = !elements.isEmpty();
-            log.info("Element with locator '{}' present: {}", locator, result);
-            return result;
-        } catch (Exception e) {
-            log.error("Error checking if element is present: {}", e.getMessage());
-            return false;
-        }
     }
 
     public boolean verifyComponentsSimilarity() {
