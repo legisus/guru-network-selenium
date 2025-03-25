@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class BasePage {
@@ -36,12 +37,44 @@ public abstract class BasePage {
 
     protected void waitForPageToLoad() {
         log.debug("Waiting for page to load completely");
-        wait.until(driver -> {
-            String readyState = ((JavascriptExecutor) driver).executeScript("return document.readyState").toString();
-            log.debug("Current document.readyState: {}", readyState);
-            return "complete".equals(readyState);
-        });
 
+        // Wait for document ready state
+        try {
+            wait.until(driver -> {
+                String readyState = ((JavascriptExecutor) driver).executeScript("return document.readyState").toString();
+                log.debug("Current document.readyState: {}", readyState);
+                return "complete".equals(readyState);
+            });
+        } catch (Exception e) {
+            log.warn("Timeout waiting for document.readyState to be complete: {}", e.getMessage());
+        }
+
+        // Add error catching script for detecting 403 errors
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript(
+                    "if (!window.jsErrors) {" +
+                            "  window.jsErrors = [];" +
+                            "  window.addEventListener('error', function(event) {" +
+                            "    window.jsErrors.push(event.message || 'Unknown error');" +
+                            "  });" +
+                            "  var originalFetch = window.fetch;" +
+                            "  window.fetch = function() {" +
+                            "    return originalFetch.apply(this, arguments)" +
+                            "      .then(function(response) {" +
+                            "        if (response.status === 403) {" +
+                            "          window.jsErrors.push('Fetch 403: ' + response.url);" +
+                            "        }" +
+                            "        return response;" +
+                            "      });" +
+                            "  };" +
+                            "}"
+            );
+        } catch (Exception e) {
+            log.warn("Error setting up JS error tracking: {}", e.getMessage());
+        }
+
+        // Wait for jQuery if it exists
         try {
             wait.until(driver -> {
                 boolean jQueryDefined = (boolean) ((JavascriptExecutor) driver)
@@ -57,12 +90,13 @@ public abstract class BasePage {
             log.debug("jQuery not available or error checking jQuery status: {}", e.getMessage());
         }
 
+        // Wait for Angular if it exists
         try {
             wait.until(driver -> {
                 boolean angularDefined = (boolean) ((JavascriptExecutor) driver)
                         .executeScript("return typeof angular != 'undefined'");
                 if (!angularDefined) {
-                    return true; // Angular is not used in the page, so no need to wait
+                    return true;
                 }
                 return (boolean) ((JavascriptExecutor) driver)
                         .executeScript("return angular.element(document).injector().get('$http').pendingRequests.length === 0");
@@ -72,8 +106,100 @@ public abstract class BasePage {
             log.debug("Angular not available or error checking Angular status: {}", e.getMessage());
         }
 
+        // Wait for React if it exists (detect loading state via DOM changes)
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript(
+                    "if (!window._domStabilityMonitor) {" +
+                            "  window._domStabilityMonitor = {" +
+                            "    lastModified: Date.now()," +
+                            "    observer: new MutationObserver(function() {" +
+                            "      window._domStabilityMonitor.lastModified = Date.now();" +
+                            "    })" +
+                            "  };" +
+                            "  window._domStabilityMonitor.observer.observe(document.body, {" +
+                            "    childList: true," +
+                            "    subtree: true," +
+                            "    attributes: true" +
+                            "  });" +
+                            "}"
+            );
+
+            // Wait for DOM to stabilize (no changes for 500ms)
+            int stabilityTimeout = 0;
+            while (stabilityTimeout < 5000) { // Max 5 seconds
+                long lastModified = (long) js.executeScript("return window._domStabilityMonitor.lastModified;");
+                long now = System.currentTimeMillis();
+                if (now - lastModified > 500) {
+                    log.debug("DOM has stabilized (no changes for 500ms)");
+                    break;
+                }
+                Thread.sleep(100);
+                stabilityTimeout += 100;
+            }
+        } catch (Exception e) {
+            log.debug("Error monitoring DOM stability: {}", e.getMessage());
+        }
+
+        // Check for any 403 errors
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            @SuppressWarnings("unchecked")
+            List<String> errors = (List<String>) js.executeScript("return window.jsErrors || [];");
+            List<String> forbiddenErrors = errors.stream()
+                    .filter(error -> error.contains("403") || error.contains("Forbidden"))
+                    .collect(Collectors.toList());
+
+            if (!forbiddenErrors.isEmpty()) {
+                log.warn("Detected 403 Forbidden errors during page load: {}", forbiddenErrors);
+            }
+        } catch (Exception e) {
+            log.debug("Error checking for 403 errors: {}", e.getMessage());
+        }
+
         log.debug("Page load wait complete");
     }
+
+//    protected void waitForPageToLoad() {
+//        log.debug("Waiting for page to load completely");
+//        wait.until(driver -> {
+//            String readyState = ((JavascriptExecutor) driver).executeScript("return document.readyState").toString();
+//            log.debug("Current document.readyState: {}", readyState);
+//            return "complete".equals(readyState);
+//        });
+//
+//        try {
+//            wait.until(driver -> {
+//                boolean jQueryDefined = (boolean) ((JavascriptExecutor) driver)
+//                        .executeScript("return typeof jQuery != 'undefined'");
+//                if (!jQueryDefined) {
+//                    return true;
+//                }
+//                return (boolean) ((JavascriptExecutor) driver)
+//                        .executeScript("return jQuery.active == 0");
+//            });
+//            log.debug("jQuery loading complete");
+//        } catch (Exception e) {
+//            log.debug("jQuery not available or error checking jQuery status: {}", e.getMessage());
+//        }
+//
+//        try {
+//            wait.until(driver -> {
+//                boolean angularDefined = (boolean) ((JavascriptExecutor) driver)
+//                        .executeScript("return typeof angular != 'undefined'");
+//                if (!angularDefined) {
+//                    return true; // Angular is not used in the page, so no need to wait
+//                }
+//                return (boolean) ((JavascriptExecutor) driver)
+//                        .executeScript("return angular.element(document).injector().get('$http').pendingRequests.length === 0");
+//            });
+//            log.debug("Angular loading complete");
+//        } catch (Exception e) {
+//            log.debug("Angular not available or error checking Angular status: {}", e.getMessage());
+//        }
+//
+//        log.debug("Page load wait complete");
+//    }
 
     protected void waitForElementPresence(WebElement element, long timeoutInSeconds) {
         log.debug("Waiting for element presence, timeout: {} seconds", timeoutInSeconds);
