@@ -1,5 +1,6 @@
 package com.guru.selenium.pages;
 
+import com.guru.selenium.utils.Navigator;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 
@@ -20,18 +21,21 @@ public class TokensPage extends BasePage {
     private final By deltaValues = By.cssSelector(".Delta_container__fMWhH");
     private final By footerNavigation = By.cssSelector(".layout_footer__Koz5Z");
 
-    // URLs
-    private static final String APP_TOKENS_URL = "https://app-guru-network-mono.dexguru.biz/tokens";
+    // URLs for comparison
     private static final String DEX_TOKENS_URL = "https://dex.guru/tokens";
+
+    private final Navigator navigator;
 
     public TokensPage() {
         super();
+        this.navigator = new Navigator();
         log.info("TokensPage initialized");
     }
 
     public void navigateToTokensPage() {
-        log.info("Navigating to app-guru-network-mono tokens page");
-        navigateToAndWaitForElement(APP_TOKENS_URL, tokenMarquee);
+        log.info("Navigating to tokens page");
+        navigator.navigateViaMenu("Tokens");
+        waitForElementToBeVisible(tokenMarquee);
     }
 
     public void navigateToDexGuruTokensPage() {

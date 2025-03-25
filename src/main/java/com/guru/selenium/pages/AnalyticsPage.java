@@ -1,6 +1,6 @@
 package com.guru.selenium.pages;
 
-import com.guru.selenium.utils.DriverFactory;
+import com.guru.selenium.utils.Navigator;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -11,8 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 @Slf4j
-public class AnalyticsPage {
-    private final WebDriver driver;
+public class AnalyticsPage extends BasePage {
     private final WebDriverWait wait;
 
     private final By assistantButton = By.cssSelector("button.aichat_toggle__GfhU0");
@@ -20,12 +19,14 @@ public class AnalyticsPage {
     private final By guruAiOpenClass = By.cssSelector(".aichat_open___aIT5");
     private final By guruAiHeader = By.cssSelector(".aichat_header__Kfkhu");
     private final By guruAiTitle = By.xpath("//span[contains(text(),'Guru AI')]");
+    private final By analyticsContainer = By.cssSelector(".content_body__1Ac9z");
 
-    private static final String ANALYTICS_PAGE_URL = "https://app-guru-network-mono.dexguru.biz/analytics";
+    private final Navigator navigator;
 
     public AnalyticsPage() {
-        this.driver = DriverFactory.getInstance().getDriver();
+        super();
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.navigator = new Navigator();
         log.info("AnalyticsPage initialized");
     }
 
@@ -33,9 +34,10 @@ public class AnalyticsPage {
      * Navigate to the Analytics page
      */
     public void navigateToAnalyticsPage() {
-        driver.get(ANALYTICS_PAGE_URL);
-        wait.until(ExpectedConditions.urlContains("/analytics"));
-        log.info("Navigated to Analytics page: {}", ANALYTICS_PAGE_URL);
+        log.info("Navigating to Analytics page via menu");
+        navigator.navigateViaMenu("Analytics");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(analyticsContainer));
+        log.info("Navigated to Analytics page");
     }
 
     /**
