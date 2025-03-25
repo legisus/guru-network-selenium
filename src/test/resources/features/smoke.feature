@@ -12,7 +12,7 @@ Feature: Smoke Functionality
     When I click on signIn button
     And Verify that popup appeared
     And Click on logIn with Telegram button
-    And Enter phone '' for login with Telegram
+    And Enter phone '4244629816' for login with Telegram
     Then Verify profile uploaded successfully
 #    #2
 #    When I navigate to tokens page
@@ -25,17 +25,17 @@ Feature: Smoke Functionality
 #    When I click on button 'Give me a summary of this data' for Guru AI
 #    Then I check that Guru AI contribute any response
 
-#  Scenario Outline: Verify pages load without errors
-##    Given I am logged into the application
-#    When I navigate to "<pageName>" page
-#    Then The page should load without errors
-#
-#    Examples:
-#      | pageName     |
-#      | Actions      |
-#      | Guru AI      |
-#      | Analytics    |
-#      | Tokens       |
-#      | Swap         |
-#      | Leaderboards |
-#      | About        |
+  Scenario Outline: Verify pages load without errors
+#    Given I am logged into the application
+    When I navigate to "<pageName>" page
+    Then The page should load without errors
+
+    Examples:
+      | pageName     |
+      | Actions      |
+      | Guru AI      |
+      | Analytics    |
+      | Tokens       |
+      | Swap         |
+      | Leaderboards |
+      | About        |
