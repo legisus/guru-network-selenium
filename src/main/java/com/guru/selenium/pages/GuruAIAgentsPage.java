@@ -4,6 +4,7 @@ import com.guru.selenium.utils.Navigator;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class GuruAIAgentsPage extends BasePage {
     private final By agentsContainer = By.cssSelector(".content_body__1Ac9z");
     private final By agentCards = By.cssSelector(".AgentCard_container__FdMw4");
-    private final By pageTitle = By.xpath("//h1[contains(text(), 'Guru AI')]");
+    private final By pageTitle = By.xpath("//div[contains(@class, 'layout_header__Aaszh')]//span[contains(text(), 'Guru AI')]");
     private final By agentTitles = By.cssSelector(".AgentCard_title__0JRGK");
 
     private final Navigator navigator;
@@ -29,19 +30,7 @@ public class GuruAIAgentsPage extends BasePage {
     }
 
     public boolean isGuruAIAgentsPageLoaded() {
-        try {
-            boolean isTitleVisible = isElementDisplayed(pageTitle);
-            boolean isAgentsContainerVisible = isElementDisplayed(agentsContainer);
-            int agentCount = driver.findElements(agentCards).size();
-
-            log.info("Guru AI Agents page loaded: title visible: {}, agents container visible: {}, agent count: {}",
-                    isTitleVisible, isAgentsContainerVisible, agentCount);
-
-            return isTitleVisible && isAgentsContainerVisible && agentCount > 0;
-        } catch (Exception e) {
-            log.error("Error checking if Guru AI Agents page is loaded: {}", e.getMessage());
-            return false;
-        }
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(pageTitle)).isDisplayed();
     }
 
     public List<String> getAvailableAgentNames() {

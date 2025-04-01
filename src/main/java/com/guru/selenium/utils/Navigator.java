@@ -39,6 +39,7 @@ public class Navigator {
     public void navigateToHome() {
         log.info("Navigating to home page");
         driver.get(baseUrl);
+        waitForPageLoad();
         waitForMainMenuToLoad();
     }
 

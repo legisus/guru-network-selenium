@@ -17,9 +17,9 @@ public class AnalyticsPage extends BasePage {
     private final By assistantButton = By.cssSelector("button.aichat_toggle__GfhU0");
     private final By guruAiContainer = By.id("page-aichat");
     private final By guruAiOpenClass = By.cssSelector(".aichat_open___aIT5");
-    private final By guruAiHeader = By.cssSelector(".aichat_header__Kfkhu");
     private final By guruAiTitle = By.xpath("//span[contains(text(),'Guru AI')]");
     private final By analyticsContainer = By.cssSelector(".content_body__1Ac9z");
+    private final By pageTitle = By.xpath("//span[contains(@class, 'Caption_header__OVD2p') and text()='Top Tokens']");
 
     private final Navigator navigator;
 
@@ -77,5 +77,9 @@ public class AnalyticsPage extends BasePage {
             log.error("Error while checking if Guru AI is opened: {}", e.getMessage());
             return false;
         }
+    }
+
+    public boolean isHeadOfAnalyticsPage() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(pageTitle)).isDisplayed();
     }
 }

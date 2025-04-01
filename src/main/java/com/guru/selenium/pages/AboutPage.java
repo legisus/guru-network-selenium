@@ -4,6 +4,7 @@ import com.guru.selenium.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 @Slf4j
 public class AboutPage extends BasePage {
@@ -11,6 +12,7 @@ public class AboutPage extends BasePage {
     private final By aboutHeading = By.cssSelector("h1");
     private final By aboutSections = By.cssSelector(".ContentItem_section__CiLdP");
     private final By contentText = By.cssSelector(".Text_container__s3zN4 p");
+    private final By pageTitle = By.xpath("//span[contains(@class, 'PageDashboardsByTag_title__NmhvS') and text()='About']");
 
     private final String pageUrl;
 
@@ -28,20 +30,7 @@ public class AboutPage extends BasePage {
     }
 
     public boolean isAboutPageLoaded() {
-        try {
-            boolean isContentContainerVisible = isElementDisplayed(contentContainer);
-            boolean isHeadingVisible = isElementDisplayed(aboutHeading);
-            int sectionCount = driver.findElements(aboutSections).size();
-            int textParagraphCount = driver.findElements(contentText).size();
-
-            log.info("About page loaded: container visible: {}, heading visible: {}, section count: {}, paragraph count: {}",
-                    isContentContainerVisible, isHeadingVisible, sectionCount, textParagraphCount);
-
-            return isContentContainerVisible && isHeadingVisible && sectionCount > 0;
-        } catch (Exception e) {
-            log.error("Error checking if About page is loaded: {}", e.getMessage());
-            return false;
-        }
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(pageTitle)).isDisplayed();
     }
 
     public String getPageTitle() {

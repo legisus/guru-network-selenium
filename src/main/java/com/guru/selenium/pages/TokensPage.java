@@ -3,6 +3,8 @@ package com.guru.selenium.pages;
 import com.guru.selenium.utils.Navigator;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ public class TokensPage extends BasePage {
     private final By tokenTagButtons = By.cssSelector(".cloud_tag___wQrd");
     private final By deltaValues = By.cssSelector(".Delta_container__fMWhH");
     private final By footerNavigation = By.cssSelector(".layout_footer__Koz5Z");
+    private final By tokensHeader = By.xpath("//span[contains(text(), 'Tokens Explorer')]");
 
     // URLs for comparison
     private static final String DEX_TOKENS_URL = "https://dex.guru/tokens";
@@ -100,5 +103,17 @@ public class TokensPage extends BasePage {
     public void captureScreenshotOfBothSites() {
         navigateToTokensPage();
         navigateToDexGuruTokensPage();
+    }
+
+    public boolean isTokensPage() {
+        try {
+          log.info("Checking if tokens page is loaded");
+            return wait.until(ExpectedConditions
+                    .visibilityOfElementLocated(tokensHeader))
+                    .isDisplayed();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
     }
 }
