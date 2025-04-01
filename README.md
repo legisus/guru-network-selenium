@@ -1,93 +1,74 @@
-# Guru Network - Selenium Test Automation
+# Guru Network - Selenium Test Framework
 
-This repository contains automated UI tests for the Guru Network application using Selenium WebDriver, Cucumber BDD, and Java.
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.18.1-green.svg)](https://www.selenium.dev/)
+[![Cucumber](https://img.shields.io/badge/Cucumber-7.15.0-brightgreen.svg)](https://cucumber.io/)
+
+A comprehensive test automation framework for Guru Network UI testing, built with Selenium WebDriver, Cucumber BDD, and Java.
 
 ## Overview
 
-The test automation framework follows the Page Object Model (POM) design pattern and uses BDD approach with Cucumber to create human-readable test specifications.
+This framework follows the Page Object Model (POM) design pattern and Behavior-Driven Development approach with Cucumber to create human-readable test specifications.
 
-### Core Features
+### Key Features
 
-- **BDD Testing**: Uses Cucumber for behavior-driven development testing
-- **Page Object Model**: Maintains separation between test logic and page-specific code
-- **Visual Comparison**: Includes utility for visual comparison between app versions
-- **Detailed Logging**: Comprehensive logging using SLF4J and Logback
-- **Cucumber Reporting**: Generate detailed HTML reports after test execution
-- **Configuration Management**: Centralized configuration handling
+- **BDD Testing**: Human-readable tests with Cucumber
+- **Page Object Model**: Clean separation between test logic and page implementation
+- **Visual Comparison**: Utilities for comparing UI elements across pages
+- **Comprehensive Logging**: Detailed logging with SLF4J and Logback
+- **Reporting**: Detailed HTML, JSON, and XML reports
+- **Centralized Configuration**: Property-based configuration system
 
-## Test Scenarios
+## Test Coverage
 
-The framework includes smoke tests that verify:
+### Smoke Tests
 
-1. **User Authentication**
-    - Login functionality with Telegram
-    - Profile verification
+- **Navigation**: Verifies all main pages load correctly
+- **User Authentication**: Telegram login and profile verification
+- **Tokens Page**: Ensures component parity with dex.guru
+- **Analytics**: Verifies page loads and analytics features
+- **Guru AI**: Tests AI assistant functionality and responses
 
-2. **Tokens Page**
-    - Navigation to tokens page
-    - Visual comparison with dex.guru tokens page
+## Technology Stack
 
-3. **Analytics Page**
-    - Navigation to analytics
-    - Guru AI assistant interaction
-
-4. **Guru AI Functionality**
-    - Testing AI assistant responses
-    - Verifying prompt button functionality
+- **Java 21**: Core programming language
+- **Selenium WebDriver 4.18.1**: Browser automation
+- **Cucumber 7.15.0**: BDD test framework
+- **JUnit 4.13.2**: Test runner and assertions
+- **WebDriverManager 5.6.3**: Automated driver management
+- **Lombok**: Reduces boilerplate code
+- **SLF4J & Logback**: Comprehensive logging
 
 ## Project Structure
 
 ```
 src/
 ├── main/java/com/guru/selenium/
-│   ├── config/           # Configuration classes
-│   │   └── Configuration.java
+│   ├── config/           # Configuration utilities
 │   ├── pages/            # Page object classes
-│   │   ├── AnalyticsPage.java
-│   │   ├── BasePage.java
-│   │   ├── GuruAIPage.java
-│   │   ├── HomePage.java
-│   │   ├── LoginPage.java
-│   │   └── TokensPage.java
+│   │   ├── BasePage.java # Common page functionality
+│   │   └── ...           # Individual page implementations
 │   ├── utils/            # Utility classes
-│   │   ├── DriverFactory.java
-│   │   └── VisualComparisonUtil.java
-│   └── resources/
-│       ├── config.properties  # Application configuration
-│       └── logback.xml        # Logging configuration
+│   └── resources/        # Configuration files
+│       ├── config.properties
+│       └── logback.xml
 └── test/
     ├── java/com/guru/selenium/
-    │   ├── runners/     # Cucumber test runners
-    │   │   └── TestRunner.java
-    │   └── steps/       # Step definitions
-    │       ├── AnalyticsSteps.java
-    │       ├── GuruAISteps.java
-    │       ├── HomeSteps.java
-    │       ├── Hooks.java
-    │       ├── LoginSteps.java
-    │       └── TokensSteps.java
+    │   ├── runners/      # Cucumber test runners
+    │   └── steps/        # Step definitions
     └── resources/
-        └── features/    # Cucumber feature files
-            └── smoke.feature
+        └── features/     # Cucumber feature files
 ```
 
-## Configuration
-
-The framework uses a centralized configuration approach:
-
-- **config.properties**: Contains environment-specific settings, URLs, timeouts, and test data
-- **logback.xml**: Configures logging levels, patterns, and output destinations
-- **Configuration.java**: Provides programmatic access to configuration properties
-
-## Setup Instructions
+## Setup & Installation
 
 ### Prerequisites
 
 - Java JDK 21
 - Maven
-- Chrome browser
+- Chrome browser (for running tests)
 
-### Installation
+### Steps
 
 1. Clone the repository:
    ```bash
@@ -102,39 +83,41 @@ The framework uses a centralized configuration approach:
 
 ## Running Tests
 
-### Run all tests
+### Run All Tests
 
 ```bash
 mvn clean test
 ```
 
-### Run specific tags
+### Run by Tags
 
 ```bash
 mvn clean test -Dcucumber.filter.tags="@YourTag"
 ```
 
-## Test Reports
+### Test Reports
 
-After test execution, reports are generated in:
+Reports are generated in:
 - HTML Report: `target/cucumber-reports/cucumber-pretty.html`
 - JSON Report: `target/cucumber-reports/CucumberTestReport.json`
 - XML Report: `target/cucumber-reports/CucumberTestReport.xml`
 
-## Driver Management
+## Driver Configuration
 
-The framework uses WebDriverManager to handle driver binaries automatically. Configuration for browsers and timeouts can be adjusted in the `DriverFactory` class and `config.properties` file.
+The framework uses WebDriverManager to handle driver binaries automatically. Browser settings can be adjusted in:
+
+- `DriverFactory.java` for code-level settings
+- `config.properties` for environment-specific settings
 
 ## Logging
 
-Logging is configured via logback.xml and provides:
-- Console output for immediate feedback
-- File output for detailed test logs
-- Different log levels (INFO, DEBUG, ERROR)
+- **Console Output**: Immediate feedback during test execution
+- **File Logging**: Detailed logs in `target/test-logs/`
+- **HTML Reports**: Visual logs with `test-report.html`
 
-## Continuous Integration
+## CI/CD Integration
 
-This test suite can be integrated into CI/CD pipelines like Jenkins, GitHub Actions, or GitLab CI. Example configuration files for CI integration can be provided upon request.
+This framework can be integrated into CI/CD pipelines like Jenkins, GitHub Actions, or GitLab CI. Configuration files available upon request.
 
 ## Contributing
 
@@ -143,3 +126,7 @@ This test suite can be integrated into CI/CD pipelines like Jenkins, GitHub Acti
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
