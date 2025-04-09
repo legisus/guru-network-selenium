@@ -14,7 +14,7 @@ public class LeaderboardsPage extends BasePage {
     private final By leaderboardTable = By.cssSelector("table.LeaderboardTable_table__ZrBqx");
     private final By leaderboardRows = By.cssSelector("tr.LeaderboardTable_row__VYYq0");
     private final By leaderboardTabs = By.cssSelector(".Tabs_tab__5q2_i");
-    private final By pageTitle = By.xpath("//span[contains(text(), 'Community Activity')]");
+    private final By pageTitle = By.xpath("(//span[contains(@class, 'Caption_container__nh_l0 Caption_header__OVD2p Caption_lg__aWlk2')])[1]");
 
     private final String pageUrl;
 

@@ -7,13 +7,16 @@ import org.openqa.selenium.WebElement;
 
 @Slf4j
 public class MenuPage extends BasePage {
-    private final By actionsMenu = By.xpath("//a[@data-tooltip-content='Actions']");
-    private final By aiHubMenu = By.xpath("//a[@data-tooltip-content='AI Hub']");
-    private final By analyticsMenu = By.xpath("//a[@data-tooltip-content='Analytics']");
-    private final By tokensMenu = By.xpath("//a[@data-tooltip-content='Tokens']");
-    private final By swapMenu = By.xpath("//a[@data-tooltip-content='Swap']");
-    private final By leaderboardMenu = By.xpath("//a[@data-tooltip-content='Leaderboard']");
-    private final By aboutMenu = By.xpath("//a[@href='/content' and @data-tooltip-content='About']");
+    private final By tasksMenu = By.cssSelector("a[href='/tasks']");
+    private final By agentsMenu = By.cssSelector("a[href='/agents']");
+    private final By analyticsMenu = By.cssSelector("a[href='/analytics']");
+    private final By tokensMenu = By.cssSelector("a[href='/tokens']");
+    private final By swapMenu = By.cssSelector("a[href='/swap']");
+    private final By leaderboardsMenu = By.cssSelector("a[href='/leaderboards']");
+    private final By contentMenu = By.cssSelector("a[href='/content']");
+    private final By launcherMenu = By.cssSelector("a[href='/launcher']");
+
+
 
     public boolean navigateToPage(String pageName, boolean isGuest) {
         log.info("Navigating to {} page as {}", pageName, isGuest ? "guest" : "logged in user");
@@ -43,13 +46,14 @@ public class MenuPage extends BasePage {
 
     private By getMenuLocatorByName(String pageName) {
         return switch (pageName) {
-            case "Actions" -> actionsMenu;
-            case "Guru AI" -> aiHubMenu;
-            case "Analytics" -> analyticsMenu;
-            case "Tokens" -> tokensMenu;
-            case "Swap" -> swapMenu;
-            case "Leaderboard" -> leaderboardMenu;
-            case "About" -> aboutMenu;
+            case "tasks" -> tasksMenu;
+            case "agents" -> agentsMenu;
+            case "analytics" -> analyticsMenu;
+            case "tokens" -> tokensMenu;
+            case "swap" -> swapMenu;
+            case "leaderboards" -> leaderboardsMenu;
+            case "content" -> contentMenu;
+            case "launcher" -> launcherMenu;
             default -> {
                 log.warn("Unknown page name: {}", pageName);
                 yield null;

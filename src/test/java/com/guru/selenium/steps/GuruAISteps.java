@@ -1,6 +1,6 @@
 package com.guru.selenium.steps;
 
-import com.guru.selenium.pages.GuruAIPage;
+import com.guru.selenium.pages.AgentsWindowPage;
 import com.guru.selenium.utils.DriverFactory;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @Slf4j
 public class GuruAISteps {
-    private final GuruAIPage guruAIPage;
+    private final AgentsWindowPage agentsWindowPage;
     private final WebDriver driver;
 
     public GuruAISteps() {
-        this.guruAIPage = new GuruAIPage();
+        this.agentsWindowPage = new AgentsWindowPage();
         this.driver = DriverFactory.getInstance().getDriver();
         log.info("GuruAISteps initialized");
     }
@@ -26,9 +26,9 @@ public class GuruAISteps {
     @Then("I click on button {string} for Guru AI")
     public void iClickOnButtonForGuruAI(String buttonText) {
         log.info("Clicking on Guru AI button: '{}'", buttonText);
-        assertTrue("Guru AI should be open before clicking buttons", guruAIPage.isGuruAIOpen());
+        assertTrue("Guru AI should be open before clicking buttons", agentsWindowPage.isAgentWindowOpen());
 
-        boolean clicked = guruAIPage.clickPromptButton(buttonText);
+        boolean clicked = agentsWindowPage.clickPromptButton(buttonText);
 
         assertTrue("Should be able to click on button: " + buttonText, clicked);
         log.info("Successfully clicked on Guru AI button: '{}'", buttonText);
@@ -37,19 +37,19 @@ public class GuruAISteps {
     @When("I enter {string} in Guru AI")
     public void iEnterTextInGuruAI(String text) {
         log.info("Entering text in Guru AI: '{}'", text);
-        guruAIPage.enterChatInput(text);
+        agentsWindowPage.enterChatInput(text);
     }
 
     @When("I submit the Guru AI message")
     public void iSubmitGuruAIMessage() {
         log.info("Submitting Guru AI message");
-        guruAIPage.submitChat();
+        agentsWindowPage.submitChat();
     }
 
     @Then("I should see a response from Guru AI")
     public void iShouldSeeResponseFromGuruAI() {
         log.info("Waiting for Guru AI response");
-        boolean responseReceived = guruAIPage.waitForResponse(15); // 15 second timeout
+        boolean responseReceived = agentsWindowPage.waitForResponse(15); // 15 second timeout
 
         assertTrue("Should receive a response from Guru AI", responseReceived);
         log.info("Successfully received response from Guru AI");
@@ -61,7 +61,7 @@ public class GuruAISteps {
 
         try {
             // Get all AI responses for examination
-            List<String> allResponses = guruAIPage.getAllResponses();
+            List<String> allResponses = agentsWindowPage.getAllResponses();
 
             // Print just the number of responses and the first response preview
             if (!allResponses.isEmpty()) {
@@ -75,7 +75,7 @@ public class GuruAISteps {
             }
 
             // Check if AI has provided a proper response
-            boolean hasProperResponse = guruAIPage.hasProperResponse();
+            boolean hasProperResponse = agentsWindowPage.hasProperResponse();
 
             // Log the result before assertion
             log.info("Guru AI response verification result: {}", hasProperResponse ? "PASS" : "FAIL");
