@@ -21,12 +21,15 @@ public abstract class BasePage {
     protected final WebDriver driver;
     protected final WebDriverWait wait;
     protected static final long DEFAULT_TIMEOUT_SECONDS = 30;
+    protected final String baseUrl;
 
     protected BasePage() {
         this.driver = DriverFactory.getInstance().getDriver();
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
         PageFactory.initElements(driver, this);
         log.info("Initialized BasePage with PageFactory");
+        baseUrl = System.getenv("EXPLORER_URL");
+        log.info("Explorer URL: {}", baseUrl);
     }
 
     public void navigateTo(String url) {

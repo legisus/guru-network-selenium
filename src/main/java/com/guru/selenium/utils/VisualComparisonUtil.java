@@ -119,7 +119,7 @@ public class VisualComparisonUtil {
         return data;
     }
 
-    private static void waitForPageLoad(WebDriver driver) {
+    static void waitForPageLoad(WebDriver driver) {
         try {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("return document.readyState").equals("complete");
