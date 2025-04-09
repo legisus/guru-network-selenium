@@ -9,12 +9,23 @@ Feature: Smoke Functionality
     When I navigate to "<pageName>" page as guest using side menu
     Then The page should load without errors
 
+#    Examples:
+#      | pageName     |
+#      | Actions      |
+#      | Guru AI      |
+#      | Analytics    |
+#      | Tokens       |
+#      | Swap         |
+#      | About        |
+#      | Leaderboard  |
+
     Examples:
       | pageName     |
-      | Actions      |
-      | Guru AI      |
-      | Analytics    |
-      | Tokens       |
-      | Swap         |
-      | About        |
-      | Leaderboard  |
+      | tasks        |
+      | agents       |
+      | analytics    |
+      | tokens       |
+      | swap         |
+      | content      |
+      | launcher     |
+      | leaderboards |

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class GuruAIPage extends BasePage {
+public class AgentsWindowPage extends BasePage {
     // Locators
     private final By guruAiContainer = By.id("page-aichat");
     private final By chatPromptButtons = By.cssSelector("button.AIChat_prompt__WYQFV");
@@ -24,16 +24,16 @@ public class GuruAIPage extends BasePage {
     private static final String SHRUG_EMOTICON = "¯_(ツ)_/¯";
     private static final String AGENT_FAILED = "AGENT_FAILED";
 
-    public GuruAIPage() {
+    public AgentsWindowPage() {
         super();
-        log.info("GuruAIPage initialized");
+        log.info("AgentsWindowPage initialized");
     }
 
     /**
      * Verify if Guru AI chat is open
      * @return true if chat is open
      */
-    public boolean isGuruAIOpen() {
+    public boolean isAgentWindowOpen() {
         log.info("Checking if Guru AI is open");
         try {
             WebElement container = waitForElementToBeVisible(guruAiContainer);
