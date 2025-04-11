@@ -105,10 +105,12 @@ public class DriverFactory {
 
         ChromeOptions options = new ChromeOptions();
 
-        if (config.getBooleanProperty("headless", false)) {
-            options.addArguments("--headless=new");
-            log.debug("Chrome running in headless mode");
-        }
+//        if (config.getBooleanProperty("headless", false)) {
+//            options.addArguments("--headless=new");
+//            log.debug("Chrome running in headless mode");
+//        }
+
+        options.addArguments("--headless=new");
 
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
